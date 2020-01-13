@@ -1,5 +1,5 @@
 {
-	"name": "CollapsibleVector",
+	"name": "CollapsibleVector-gbfwiki",
 	"namemsg": "collapsiblevector-extensionname",
 	"version": "0.1.10",
 	"author": [
@@ -30,7 +30,6 @@
 			],
 			"dependencies": [
 				"jquery.client",
-				"jquery.cookie",
 				"jquery.tabIndex"
 			]
 		}

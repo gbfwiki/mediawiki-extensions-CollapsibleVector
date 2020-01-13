@@ -9,11 +9,7 @@
 	function toggle( $element ) {
 		var isCollapsed = $element.parent().is( '.collapsed' );
 
-		$.cookie(
-			'vector-nav-' + $element.parent().attr( 'id' ),
-			isCollapsed,
-			{ expires: 30, path: '/' }
-		);
+		localStorage.setItem('vector-nav-' + $element.parent().attr( 'id' ), isCollapsed);
 
 		$element
 			.parent()
@@ -67,11 +63,11 @@
 		$( '#mw-panel > .portal:first' ).addClass( 'first persistent' );
 		// Apply a class to the entire panel to activate styles
 		$( '#mw-panel' ).addClass( 'collapsible-nav' );
-		// Use cookie data to restore preferences of what to show and hide
+		// Use localstorage to restore preferences of what to show and hide
 		$( '#mw-panel > .portal:not(.persistent)' )
 			.each( function ( i ) {
 				var id = $( this ).attr( 'id' ),
-					state = $.cookie( 'vector-nav-' + id );
+					state = localStorage.getItem('vector-nav-' + id );
 				$( this ).find( 'ul:first' ).attr( 'id', id + '-list' );
 				// Add anchor tag to heading for better accessibility
 				$( this ).find( 'h3' ).wrapInner(
@@ -111,11 +107,11 @@
 							'aria-expanded': 'false'
 						} );
 				}
-				// Re-save cookie
+				// Re-save localstorage
 				if ( state !== null ) {
-					$.cookie( 'vector-nav-' + $( this ).attr( 'id' ), state, { expires: 30, path: '/' } );
+					localStorage.setItem('vector-nav-' + $( this ).attr( 'id' ), state);
 				}
-			} );
+			});
 
 		/* Tab Indexing */
 
