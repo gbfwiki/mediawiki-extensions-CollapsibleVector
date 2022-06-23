@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 $path = '../../..';
 
 if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
@@ -19,7 +21,10 @@ class SwitchExperimentPrefs extends Maintenance {
 	}
 
 	function execute() {
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_PRIMARY );
+		$services = MediaWikiServices::getInstance();
+		$lbFactory = $services->getDBLoadBalancerFactory();
+		$userOptionsManager = $services->getUserOptionsManager();
 
 		$batchSize = 100;
 		$total = 0;
@@ -42,16 +47,16 @@ class SwitchExperimentPrefs extends Maintenance {
 
 			foreach ( $ids as $id ) {
 				$user = User::newFromId( $id );
-				if ( !$user->isLoggedIn() ) {
+				if ( !$user->isRegistered() ) {
 					continue;
 				}
-				$user->setOption( $this->getOption( 'pref' ), $this->getOption( 'value' ) );
+				$userOptionsManager->setOption( $user, $this->getOption( 'pref' ), $this->getOption( 'value' ) );
 				$user->saveSettings();
 			}
 
 			echo "$total\n";
 
-			wfWaitForSlaves();
+			$lbFactory->waitForReplication();
 		}
 		echo "Done\n";
 	}

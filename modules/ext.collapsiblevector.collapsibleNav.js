@@ -1,7 +1,7 @@
 /**
  * Collapsible navigation for Vector
  */
-( function ( mw, $ ) {
+( function () {
 	'use strict';
 	var map;
 
@@ -15,7 +15,7 @@
 			.parent()
 			.toggleClass( 'expanded' )
 			.toggleClass( 'collapsed' )
-			.find( '.body' )
+			.find( '.vector-menu-content' )
 			.slideToggle( 'fast' );
 		isCollapsed = !isCollapsed;
 
@@ -54,7 +54,7 @@
 		return true;
 	}
 
-	$( function ( $ ) {
+	function executeMain( $ ) {
 		var $headings;
 
 		/* General Portal Modification */
@@ -78,7 +78,7 @@
 							'aria-controls': id + '-list',
 							role: 'button'
 						} )
-						.click( false )
+						.on( 'click', false )
 				);
 				// In the case that we are not showing the new version, let's show the languages by default
 				if (
@@ -89,7 +89,7 @@
 					$( this )
 						.addClass( 'expanded' )
 						.removeClass( 'collapsed' )
-						.find( '.body' )
+						.find( '.vector-menu-content' )
 						.hide() // bug 34450
 						.show();
 					$( this ).find( 'h3 > a' )
@@ -131,10 +131,15 @@
 			.on( 'mousedown', '.portal:not(.persistent) > h3', function ( e ) {
 				if ( e.which !== 3 ) { // Right mouse click
 					toggle( $( this ) );
-					$( this ).blur();
+					$( this ).trigger( 'blur' );
 				}
 				return false;
 			} );
-	} );
+	}
 
-}( mediaWiki, jQuery ) );
+	$( function ( $ ) {
+		mw.hook( 'wikipage.content' ).add( function () {
+			executeMain( $ );
+		} );
+	} );
+}() );
